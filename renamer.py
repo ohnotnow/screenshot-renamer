@@ -48,7 +48,7 @@ def get_filename_from_description(description):
     response = ollama.chat(model=text_model, messages=[
         {
             'role': 'user',
-            'content': 'Could you give me some keywords from this text that I can use to tag a file (I DO NOT want a file extension). <text>' + description + '</text>',
+            'content': 'Could you give me some keywords from this text that I can use to tag a file (I DO NOT want a file extension). Reply ONLY with the keywords. <text>' + description + '</text>',
         },
     ])
     filename = response['message']['content'].strip()
