@@ -60,20 +60,26 @@ def get_filename_from_description(description):
     # filename = re.sub(r'(png|jpg|jpeg|gif|bmp|tiff|webp|svg|pdf|docx|doc|pptx|ppt|txt|csv|json|xml|html|css|js|ts|py|rb|java|c|cpp|h|hpp|cs|php|go|swift|kt|sh|bat|ps1|psm1|psd1|ps1xml|pssc|psc1)', '', filename, flags=re.UNICODE)
     return filename[:50]
 
-def get_matching_files(pattern):
+def get_matching_files(pattern, max_files=0):
     files = glob.glob(pattern)
     pattern = re.compile(r'Screenshot 20\d{2}-\d{2}-\d{2} at \d{2}\.\d{2}\.\d{2}\.png')
-    return [file for file in files if pattern.match(file)]
+    matches = [file for file in files if pattern.match(file)]
+    if max_files == 0:
+        return matches
+    else:
+        return matches[:max_files]
 
 def main():
     ensure_required_models_available()
     parser = argparse.ArgumentParser(description="Rename files based on their content")
     parser.add_argument("--pattern", help="The pattern to match files against", default="Screenshot *.png")
     parser.add_argument("--image-prompt", help="The prompt to use when asking for a description of an image", default='Could you give me a VERY short description of this image that I can use as a filename (I do not need the file extension). For example "image of a weather forecast", "screenshot of a website about a raspberry pi", "photo of a black cat"')
+    parser.add_argument("--max-files", help="The maximum number of files to process", default=0, type=int)
     args = parser.parse_args()
     pattern = args.pattern
     image_prompt = args.image_prompt
-    matching_files = get_matching_files(pattern)
+    max_files = args.max_files
+    matching_files = get_matching_files(pattern, max_files)
     if len(matching_files) == 0:
         print(f"No files found that match the pattern '{pattern}*'")
         exit(1)
