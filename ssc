@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "No parameter provided. Please provide a parameter."
+    exit 1
+fi
+
+PATTERN="$1"
+
+for PNG in *.png; do
+    if identify -verbose "$PNG" | grep -iq "$PATTERN"; then
+        echo "Match found in: $PNG"
+    fi
+done
