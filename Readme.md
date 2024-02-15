@@ -31,7 +31,7 @@ This Python script enhances the management of MacOS screenshots by leveraging AI
    ```bash
    # go to the directory where your screenshots are (make a test copy first!)
    cd ~/Pictures
-   python renamer.py
+   python /path/to/repo/renamer.py
    ```
 
 The script will process each screenshot, renaming it and updating its metadata based on the content description.
