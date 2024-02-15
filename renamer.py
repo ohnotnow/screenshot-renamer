@@ -32,11 +32,11 @@ def add_description_to_image_metadata(file_path, description):
         pnginfo.add_text("Description", description)
         img.save(file_path, "PNG", pnginfo=pnginfo)
 
-def get_image_description(filename):
+def get_image_description(filename, image_prompt="What is in this image?"):
     response = ollama.chat(model=vision_model, messages=[
         {
             'role': 'user',
-            'content': 'Could you give me a VERY short description of this image that I can use as a filename (I do not need the file extension). For example "image of a weather forecast", "screenshot of a website about a raspberry pi", "photo of a black cat"',
+            'content': image_prompt,
             'images': [filename]
         },
     ])
@@ -69,8 +69,10 @@ def main():
     ensure_required_models_available()
     parser = argparse.ArgumentParser(description="Rename files based on their content")
     parser.add_argument("--pattern", help="The pattern to match files against", default="Screenshot *.png")
+    parser.add_argument("--image-prompt", help="The prompt to use when asking for a description of an image", default='Could you give me a VERY short description of this image that I can use as a filename (I do not need the file extension). For example "image of a weather forecast", "screenshot of a website about a raspberry pi", "photo of a black cat"')
     args = parser.parse_args()
     pattern = args.pattern
+    image_prompt = args.image_prompt
     matching_files = get_matching_files(pattern)
     if len(matching_files) == 0:
         print(f"No files found that match the pattern '{pattern}*'")
@@ -80,7 +82,7 @@ def main():
     for i, filename in enumerate(matching_files):
         print(f"Getting description of file {i+1} of {len(matching_files)}: {filename}")
         original_filename, file_extension = os.path.splitext(filename)
-        description = get_image_description(filename)
+        description = get_image_description(filename, image_prompt)
         new_filenames.append({
             "original_filename": original_filename,
             "file_extension": file_extension,
