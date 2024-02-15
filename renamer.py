@@ -1,6 +1,7 @@
 import glob
 import os
 import re
+import argparse
 import ollama
 from yaspin import yaspin
 from PIL import Image
@@ -66,8 +67,10 @@ def get_matching_files(pattern):
 
 def main():
     ensure_required_models_available()
-
-    pattern = "Screenshot *.png"
+    parser = argparse.ArgumentParser(description="Rename files based on their content")
+    parser.add_argument("--pattern", help="The pattern to match files against", default="Screenshot *.png")
+    args = parser.parse_args()
+    pattern = args.pattern
     matching_files = get_matching_files(pattern)
     if len(matching_files) == 0:
         print(f"No files found that match the pattern '{pattern}*'")
